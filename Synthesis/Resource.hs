@@ -111,6 +111,14 @@ d = withLocatedError [| de |]
 --A concrete type implementing the Resource class
 newtype ResourceT r m a = ResourceT {unResourceT :: StateT (InUse r) m a} deriving (Monad)
 
+instance (Monad m) => Applicative (ResourceT r m) where
+    pure = return
+    (<*>) = ap
+
+instance (Monad m) => Functor (ResourceT r m) where
+    fmap = liftM
+
+
 runResourceT  inUse = flip runStateT  inUse . unResourceT
 evalResourceT inUse = flip evalStateT inUse . unResourceT
 
